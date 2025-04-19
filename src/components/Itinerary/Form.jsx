@@ -10,6 +10,7 @@ function Form({ onSubmit, onBudgetChange, onDestinationChange, setPreferences })
     endDate: "",
     budget: "",
     preferences: "",
+    travelers: "1",
   });
 
   const [errors, setErrors] = useState({});
@@ -112,6 +113,16 @@ function Form({ onSubmit, onBudgetChange, onDestinationChange, setPreferences })
         }
         break;
       
+      case "travelers":
+        if (!value) {
+          newErrors.travelers = "Number of travelers is required";
+        } else if (isNaN(value) || Number(value) <= 0 || !Number.isInteger(Number(value))) {
+          newErrors.travelers = "Number of travelers must be a positive integer";
+        } else {
+          delete newErrors.travelers;
+        }
+        break;
+      
       default:
         break;
     }
@@ -146,7 +157,9 @@ function Form({ onSubmit, onBudgetChange, onDestinationChange, setPreferences })
     const formattedData = {
       ...formData,
       // Parse preferences string into array
-      preferences: formData.preferences.split(',').map(p => p.trim()).filter(p => p !== '')
+      preferences: formData.preferences.split(',').map(p => p.trim()).filter(p => p !== ''),
+      // Ensure travelers is a number
+      travelers: parseInt(formData.travelers, 10) || 1
     };
     
     // Call the onSubmit prop with the formatted form data
@@ -218,8 +231,24 @@ function Form({ onSubmit, onBudgetChange, onDestinationChange, setPreferences })
       <div className="form-group">
         <input 
           type="number" 
+          name="travelers" 
+          placeholder="Number of Travelers" 
+          value={formData.travelers}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          min="1"
+          className={errors.travelers && touched.travelers ? "error" : ""}
+        />
+        {errors.travelers && touched.travelers && (
+          <div className="error-message">{errors.travelers}</div>
+        )}
+      </div>
+
+      <div className="form-group">
+        <input 
+          type="number" 
           name="budget" 
-          placeholder="Budget ($)" 
+          placeholder="Total Budget for All Travelers ($)" 
           value={formData.budget}
           onChange={handleChange}
           onBlur={handleBlur}

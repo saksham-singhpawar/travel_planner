@@ -79,6 +79,8 @@ function Itinerary() {
           endDate: formData.endDate,
           content: sampleItinerary,
           preferences: formData.preferences,
+          travelers: formData.travelers || 1,
+          budget: formData.budget,
           createdAt: new Date().toISOString()
         };
         
@@ -227,12 +229,15 @@ function Itinerary() {
 
 // Helper function to create a sample itinerary based on form data
 const createSampleItinerary = (formData) => {
-  const { destination, startDate, endDate, budget, preferences } = formData;
+  const { destination, startDate, endDate, budget, preferences, travelers = 1 } = formData;
   
   // Calculate trip duration
   const start = new Date(startDate);
   const end = new Date(endDate);
   const tripDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+  
+  // Calculate per-person budget
+  const budgetPerPerson = budget / travelers;
   
   // Format dates for display
   const formatDate = (date) => {
@@ -251,7 +256,8 @@ const createSampleItinerary = (formData) => {
   itinerary += `* Destination: ${destination}\n`;
   itinerary += `* Duration: ${tripDays} days\n`;
   itinerary += `* Dates: ${formatDate(startDate)} to ${formatDate(endDate)}\n`;
-  itinerary += `* Budget: $${budget}\n\n`;
+  itinerary += `* Travelers: ${travelers} ${travelers === 1 ? 'person' : 'people'}\n`;
+  itinerary += `* Total Budget: $${budget} (approx. $${Math.round(budgetPerPerson)} per person)\n\n`;
   
   // Add preferences section
   const preferencesArray = Array.isArray(preferences) ? preferences : [];
@@ -271,20 +277,26 @@ const createSampleItinerary = (formData) => {
     itinerary += `* Evening: Dinner at a recommended restaurant\n\n`;
   }
   
-  // Add budget breakdown section
+  // Add budget breakdown section with per-person calculations when needed
   itinerary += `\n**Estimated Budget Breakdown:**\n`;
-  itinerary += `* Accommodation: $${Math.round(budget * 0.40)} (40% of budget)\n`;
-  itinerary += `* Food & Dining: $${Math.round(budget * 0.25)} (25% of budget)\n`;
-  itinerary += `* Attractions & Activities: $${Math.round(budget * 0.15)} (15% of budget)\n`;
-  itinerary += `* Local Transportation: $${Math.round(budget * 0.10)} (10% of budget)\n`;
-  itinerary += `* Shopping & Souvenirs: $${Math.round(budget * 0.05)} (5% of budget)\n`;
-  itinerary += `* Contingency Fund: $${Math.round(budget * 0.05)} (5% of budget)\n\n`;
+  itinerary += `* Accommodation: $${Math.round(budget * 0.40)} total (${travelers > 1 ? `approx. $${Math.round((budget * 0.40) / travelers)} per person, ` : ''}40% of budget)\n`;
+  itinerary += `* Food & Dining: $${Math.round(budget * 0.25)} total (${travelers > 1 ? `approx. $${Math.round((budget * 0.25) / travelers)} per person, ` : ''}25% of budget)\n`;
+  itinerary += `* Attractions & Activities: $${Math.round(budget * 0.15)} total (${travelers > 1 ? `approx. $${Math.round((budget * 0.15) / travelers)} per person, ` : ''}15% of budget)\n`;
+  itinerary += `* Local Transportation: $${Math.round(budget * 0.10)} total (${travelers > 1 ? `approx. $${Math.round((budget * 0.10) / travelers)} per person, ` : ''}10% of budget)\n`;
+  itinerary += `* Shopping & Souvenirs: $${Math.round(budget * 0.05)} total (${travelers > 1 ? `approx. $${Math.round((budget * 0.05) / travelers)} per person, ` : ''}5% of budget)\n`;
+  itinerary += `* Contingency Fund: $${Math.round(budget * 0.05)} total (${travelers > 1 ? `approx. $${Math.round((budget * 0.05) / travelers)} per person, ` : ''}5% of budget)\n\n`;
   
   // Add accommodation recommendations
   itinerary += `**Accommodation Recommendations:**\n`;
-  itinerary += `* Budget Option: Hostels or budget hotels ($50-100/night)\n`;
-  itinerary += `* Mid-Range Option: 3-star hotels ($100-200/night)\n`;
-  itinerary += `* Luxury Option: 4-5 star hotels or resorts ($200+/night)\n\n`;
+  if (travelers === 1) {
+    itinerary += `* Budget Option: Hostels or budget hotels ($50-100/night)\n`;
+    itinerary += `* Mid-Range Option: 3-star hotels ($100-200/night)\n`;
+    itinerary += `* Luxury Option: 4-5 star hotels or resorts ($200+/night)\n\n`;
+  } else {
+    itinerary += `* Budget Option: Vacation rentals or budget hotels ($${50 * travelers}-${100 * travelers}/night for ${travelers} people)\n`;
+    itinerary += `* Mid-Range Option: 3-star hotels or apartment rentals ($${100 * travelers}-${200 * travelers}/night for ${travelers} people)\n`;
+    itinerary += `* Luxury Option: 4-5 star hotels, resorts or luxury apartments ($${200 * travelers}+/night for ${travelers} people)\n\n`;
+  }
   
   // Add packing suggestions
   itinerary += `**Packing Suggestions:**\n`;
@@ -297,9 +309,10 @@ const createSampleItinerary = (formData) => {
 };
 
 // Helper functions for destination-specific itineraries
-const createParisItinerary = (days, preferences, budget) => {
+const createParisItinerary = (days, preferences, budget, travelers = 1) => {
   let itinerary = '';
   const budgetPerDay = budget / days;
+  const budgetPerPersonPerDay = budgetPerDay / travelers;
   
   // Day 1 is always Eiffel Tower and Seine
   itinerary += `**Day 1: Welcome to Paris!**\n`;
@@ -359,7 +372,7 @@ const createParisItinerary = (days, preferences, budget) => {
     
     if (preferences.some(p => p.toLowerCase().includes('sight'))) {
       itinerary += `* Afternoon: Musée d'Orsay (€16) with its impressive Impressionist collection\n`;
-    } else if (budgetPerDay > 100) {
+    } else if (budgetPerPersonPerDay > 100) {
       itinerary += `* Afternoon: Shopping along Champs-Élysées\n`;
     } else {
       itinerary += `* Afternoon: Walk along the Canal Saint-Martin\n`;
@@ -393,9 +406,10 @@ const createParisItinerary = (days, preferences, budget) => {
   return itinerary;
 };
 
-const createTokyoItinerary = (days, preferences, budget) => {
+const createTokyoItinerary = (days, preferences, budget, travelers = 1) => {
   let itinerary = '';
   const budgetPerDay = budget / days;
+  const budgetPerPersonPerDay = budgetPerDay / travelers;
   
   // Day 1 is always Tokyo orientation
   itinerary += `**Day 1: Welcome to Tokyo!**\n`;
@@ -479,7 +493,7 @@ const createTokyoItinerary = (days, preferences, budget) => {
       itinerary += `  - Japan's tallest structure at 634 meters\n`;
       itinerary += `  - Fast ticket option available to skip lines (additional ¥1,000)\n`;
       itinerary += `  - Have lunch at the Sky Restaurant (reservation recommended)\n`;
-    } else if (budgetPerDay > 100) {
+    } else if (budgetPerPersonPerDay > 100) {
       itinerary += `* Midday: Shopping in Ginza\n`;
       itinerary += `  - Visit Japan's most luxurious shopping district\n`;
       itinerary += `  - Explore Ginza Six or the newly renovated Mitsukoshi department store\n`;
@@ -550,9 +564,10 @@ const createTokyoItinerary = (days, preferences, budget) => {
   return itinerary;
 };
 
-const createNewYorkItinerary = (days, preferences, budget) => {
+const createNewYorkItinerary = (days, preferences, budget, travelers = 1) => {
   let itinerary = '';
   const budgetPerDay = budget / days;
+  const budgetPerPersonPerDay = budgetPerDay / travelers;
   
   // Day 1 is always Central Park and Midtown
   itinerary += `**Day 1: Welcome to New York City!**\n`;
@@ -624,7 +639,7 @@ const createNewYorkItinerary = (days, preferences, budget) => {
       itinerary += `  - Allow 2 hours for the museum experience\n`;
       itinerary += `  - Visit the reflecting pools at the memorial\n`;
       itinerary += `  - Consider the guided tour for additional context ($20 extra)\n`;
-    } else if (budgetPerDay > 100) {
+    } else if (budgetPerPersonPerDay > 100) {
       itinerary += `* Afternoon: Shopping in SoHo\n`;
       itinerary += `  - Browse designer boutiques and flagship stores\n`;
       itinerary += `  - Explore the cast-iron architecture of the district\n`;
@@ -653,7 +668,7 @@ const createNewYorkItinerary = (days, preferences, budget) => {
     
     itinerary += `* Midday: Lunch on the Upper East Side\n`;
     
-    if (budgetPerDay > 150) {
+    if (budgetPerPersonPerDay > 150) {
       itinerary += `* Afternoon: Shopping in SoHo\n`;
     } else {
       itinerary += `* Afternoon: High Line elevated park (free)\n`;
@@ -696,9 +711,10 @@ const createNewYorkItinerary = (days, preferences, budget) => {
   return itinerary;
 };
 
-const createGenericItinerary = (destination, days, preferences, budget) => {
+const createGenericItinerary = (destination, days, preferences, budget, travelers = 1) => {
   let itinerary = '';
   const budgetPerDay = budget / days;
+  const budgetPerPersonPerDay = budgetPerDay / travelers;
   
   // Day 1 is always orientation and settling in
   itinerary += `**Day 1: Welcome to ${destination}!**\n`;
@@ -722,7 +738,7 @@ const createGenericItinerary = (destination, days, preferences, budget) => {
     }
     
     // Midday meal based on budget
-    if (budgetPerDay > 100 && preferences.some(p => p.toLowerCase().includes('food') || p.toLowerCase().includes('dining'))) {
+    if (budgetPerPersonPerDay > 100 && preferences.some(p => p.toLowerCase().includes('food') || p.toLowerCase().includes('dining'))) {
       itinerary += `* Lunch: Fine dining experience with local specialties\n`;
     } else {
       itinerary += `* Lunch: Casual meal at a local favorite spot\n`;
