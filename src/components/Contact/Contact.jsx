@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Contact.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +11,11 @@ import {
 import { 
   faPhone, 
   faEnvelope, 
-  faLocationDot 
+  faLocationDot,
+  faPlus,
+  faMinus,
+  faCheckCircle,
+  faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 
 const Contact = () => {
@@ -23,82 +27,12 @@ const Contact = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [newsletter, setNewsletter] = useState({
     email: "",
     subscribed: false,
     error: ""
   });
-
-  useEffect(() => {
-    // Load Google Maps script
-    const googleMapScript = document.createElement('script');
-    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
-    googleMapScript.async = true;
-    googleMapScript.defer = true;
-    googleMapScript.id = 'googleMapsScript';
-    window.document.body.appendChild(googleMapScript);
-
-    googleMapScript.addEventListener('load', () => {
-      setMapLoaded(true);
-    });
-
-    return () => {
-      // Clean up on unmount
-      if (document.getElementById('googleMapsScript')) {
-        document.getElementById('googleMapsScript').remove();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (mapLoaded) {
-      initMap();
-    }
-  }, [mapLoaded]);
-
-  const initMap = () => {
-    const mapOptions = {
-      center: { lat: 40.7128, lng: -74.0060 }, // Example: New York coordinates
-      zoom: 15,
-      styles: [
-        {
-          featureType: "all",
-          elementType: "geometry.fill",
-          stylers: [{ weight: "2.00" }]
-        },
-        {
-          featureType: "all",
-          elementType: "geometry.stroke",
-          stylers: [{ color: "#9c9c9c" }]
-        },
-        {
-          featureType: "all",
-          elementType: "labels.text",
-          stylers: [{ visibility: "on" }]
-        },
-        {
-          featureType: "administrative",
-          elementType: "all",
-          stylers: [{ visibility: "on" }]
-        }
-      ]
-    };
-
-    const map = new window.google.maps.Map(
-      document.getElementById("google-map"),
-      mapOptions
-    );
-
-    // Add a marker
-    new window.google.maps.Marker({
-      position: mapOptions.center,
-      map: map,
-      title: "Our Office",
-      animation: window.google.maps.Animation.DROP
-    });
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -300,7 +234,7 @@ const Contact = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              <i className="fas fa-check-circle"></i>
+              <FontAwesomeIcon icon={faCheckCircle} className="success-icon" />
               <h3>Thank you!</h3>
               <p>Your message has been sent successfully. We'll get back to you shortly.</p>
             </motion.div>
@@ -361,30 +295,6 @@ const Contact = () => {
           )}
         </div>
       </div>
-
-      <div className="map-container">
-        <h2>Find Us</h2>
-        <div className="map-wrapper">
-          <div id="google-map" className="google-map"></div>
-          {!mapLoaded && (
-            <div className="map-placeholder">
-              <div className="map-overlay">Loading map...</div>
-            </div>
-          )}
-          <div className="map-details">
-            <div className="detail-card">
-              <i className="fas fa-subway"></i>
-              <h3>Public Transit</h3>
-              <p>Subway Line 1, 2, 3 to Adventure Station</p>
-            </div>
-            <div className="detail-card">
-              <i className="fas fa-car"></i>
-              <h3>Parking</h3>
-              <p>Available at Wanderlust Garage (2 blocks away)</p>
-            </div>
-          </div>
-        </div>
-      </div>
       
       <div className="faq-section">
         <h2>Frequently Asked Questions</h2>
@@ -402,7 +312,7 @@ const Contact = () => {
                 onClick={() => toggleFaq(index)}
               >
                 <h3>{faq.question}</h3>
-                <i className={`fas ${expandedFaq === index ? 'fa-minus' : 'fa-plus'}`}></i>
+                <FontAwesomeIcon icon={expandedFaq === index ? faMinus : faPlus} />
               </div>
               <AnimatePresence>
                 {expandedFaq === index && (
@@ -432,7 +342,7 @@ const Contact = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <i className="fas fa-paper-plane"></i>
+            <FontAwesomeIcon icon={faPaperPlane} className="success-icon" />
             <h3>Thank you for subscribing!</h3>
             <p>You're now on the list for our latest travel updates and offers.</p>
           </motion.div>

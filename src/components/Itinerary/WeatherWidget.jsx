@@ -33,7 +33,8 @@ function WeatherWidget({ destination }) {
   if (!weatherData) return null;
 
   const { current, forecast } = weatherData;
-  const iconUrl = `https://openweathermap.org/img/wn/${current.icon}@2x.png`;
+  // WeatherAPI.com already provides full icon URLs
+  const iconUrl = current.icon;
 
   return (
     <div className="weather-widget">
@@ -51,7 +52,7 @@ function WeatherWidget({ destination }) {
           <div className="weather-details">
             <span>Feels like: {Math.round(current.feels_like)}°C</span> | 
             <span>Humidity: {current.humidity}%</span> |
-            <span>Wind: {current.wind_speed} m/s</span>
+            <span>Wind: {Math.round(current.wind_speed)} km/h</span>
           </div>
         </div>
       </div>
@@ -63,7 +64,7 @@ function WeatherWidget({ destination }) {
             <div key={day.date} className="forecast-day">
               <div className="forecast-date">{formatDate(day.date)}</div>
               <img 
-                src={`https://openweathermap.org/img/wn/${day.icon}.png`} 
+                src={day.icon}
                 alt={day.description} 
                 className="forecast-icon" 
               />

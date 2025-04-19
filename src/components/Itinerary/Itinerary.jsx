@@ -202,23 +202,6 @@ function Itinerary() {
             )}
           </div>
           
-          {/* Debug output for itinerary state */}
-          <div style={{ color: 'white', margin: '10px 0', textAlign: 'left', padding: '10px', background: 'rgba(0,0,0,0.5)', borderRadius: '5px' }}>
-            <p>Itinerary state: {itinerary ? `Has content (${itinerary.length} chars)` : 'Empty'}</p>
-            <p>Loading: {loading ? 'Yes' : 'No'}</p>
-            <button 
-              onClick={() => {
-                console.log('Full itinerary:', itinerary);
-                // Force a simple itinerary for testing
-                const testItinerary = "**Day 1: Test**\n* Morning: Test activity\n* Afternoon: Test activity\n* Evening: Test activity";
-                setItinerary(testItinerary);
-              }}
-              style={{ padding: '5px 10px', background: '#2575fc', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-            >
-              Test Simple Itinerary
-            </button>
-          </div>
-          
           {itinerary ? (
             <ItineraryDisplay 
               itinerary={itinerary} 

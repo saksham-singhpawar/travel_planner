@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 7000;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY || "YOUR_OPENWEATHER_API_KEY"; // You'll need to add this to your .env file
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY || "YOUR_WEATHERAPI_KEY"; // You'll need to add this to your .env file
 
 app.post("/api/plan-trip", async (req, res) => {
   const { destination, startDate, endDate, budget, preferences } = req.body;
@@ -65,7 +65,7 @@ app.post("/api/plan-trip", async (req, res) => {
   }
 });
 
-// New endpoint to get weather information for a destination
+// Weather endpoint - updated for WeatherAPI.com
 app.get("/api/weather", async (req, res) => {
   const { location } = req.query;
   
@@ -74,40 +74,32 @@ app.get("/api/weather", async (req, res) => {
   }
   
   try {
-    // First get the coordinates for the location
-    const geoResponse = await axios.get(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(location)}&limit=1&appid=${WEATHER_API_KEY}`
+    // WeatherAPI.com provides current weather and forecast in one call
+    const response = await axios.get(
+      `https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(location)}&days=5&aqi=no&alerts=no`
     );
     
-    if (!geoResponse.data || geoResponse.data.length === 0) {
-      return res.status(404).json({ error: "Location not found" });
-    }
+    const { current, forecast, location: locationData } = response.data;
     
-    const { lat, lon } = geoResponse.data[0];
-    
-    // Get the current weather using the coordinates
-    const weatherResponse = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_API_KEY}`
-    );
-    
-    // Get the 5-day forecast
-    const forecastResponse = await axios.get(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_API_KEY}`
-    );
-    
-    // Process forecast data to get daily forecasts
-    const dailyForecasts = processForecastData(forecastResponse.data.list);
+    // Process forecast data to match our expected format
+    const dailyForecasts = forecast.forecastday.map(day => ({
+      date: day.date,
+      temp_min: day.day.mintemp_c,
+      temp_max: day.day.maxtemp_c,
+      description: day.day.condition.text,
+      icon: day.day.condition.icon
+    }));
     
     res.json({
       current: {
-        temp: weatherResponse.data.main.temp,
-        feels_like: weatherResponse.data.main.feels_like,
-        humidity: weatherResponse.data.main.humidity,
-        description: weatherResponse.data.weather[0].description,
-        icon: weatherResponse.data.weather[0].icon,
-        wind_speed: weatherResponse.data.wind.speed,
-        location: `${weatherResponse.data.name}, ${weatherResponse.data.sys.country}`,
-        timestamp: weatherResponse.data.dt * 1000
+        temp: current.temp_c,
+        feels_like: current.feelslike_c,
+        humidity: current.humidity,
+        description: current.condition.text,
+        icon: current.condition.icon,
+        wind_speed: current.wind_kph,
+        location: `${locationData.name}, ${locationData.country}`,
+        timestamp: current.last_updated_epoch * 1000
       },
       forecast: dailyForecasts
     });
@@ -119,34 +111,5 @@ app.get("/api/weather", async (req, res) => {
     });
   }
 });
-
-// Helper function to process forecast data into daily forecasts
-function processForecastData(forecastList) {
-  const dailyData = {};
-  
-  forecastList.forEach(item => {
-    const date = new Date(item.dt * 1000).toISOString().split('T')[0];
-    
-    if (!dailyData[date]) {
-      dailyData[date] = {
-        date,
-        temp_min: item.main.temp_min,
-        temp_max: item.main.temp_max,
-        description: item.weather[0].description,
-        icon: item.weather[0].icon
-      };
-    } else {
-      // Update min/max temperatures
-      if (item.main.temp_min < dailyData[date].temp_min) {
-        dailyData[date].temp_min = item.main.temp_min;
-      }
-      if (item.main.temp_max > dailyData[date].temp_max) {
-        dailyData[date].temp_max = item.main.temp_max;
-      }
-    }
-  });
-  
-  return Object.values(dailyData);
-}
 
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
