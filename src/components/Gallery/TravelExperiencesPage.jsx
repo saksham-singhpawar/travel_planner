@@ -10,7 +10,7 @@ const experiences = [
     id: 1,
     title: "Sunrise at Santorini",
     location: "Santorini, Greece",
-    image: "/images/santorini.jpg",
+    image: "/images/sunrise-santorini.jpg",
     date: "June 15, 2023",
     category: "Scenic Views",
     description: "Watching the sunrise over the caldera with its white-washed buildings and blue domes is an unforgettable experience."
@@ -19,7 +19,7 @@ const experiences = [
     id: 2,
     title: "Cherry Blossom Festival",
     location: "Tokyo, Japan",
-    image: "/images/tokyo.jpg",
+    image: "/images/cherry-blossom-tokyo.jpg",
     date: "April 3, 2023",
     category: "Cultural",
     description: "Experiencing hanami (cherry blossom viewing) in Japan is magical. The parks are filled with people celebrating the fleeting beauty of the sakura."
@@ -28,7 +28,7 @@ const experiences = [
     id: 3,
     title: "Safari Adventure",
     location: "Serengeti, Tanzania",
-    image: "/images/safari.jpg",
+    image: "/images/safari-serengeti.jpg",
     date: "August 22, 2023",
     category: "Adventure",
     description: "Witnessing the great migration with thousands of wildebeest crossing the plains is one of nature's most spectacular displays."
@@ -37,7 +37,7 @@ const experiences = [
     id: 4,
     title: "Northern Lights",
     location: "Tromsø, Norway",
-    image: "/images/northern-lights.jpg",
+    image: "/images/northern-lights-tromso.jpg",
     date: "January 10, 2023",
     category: "Scenic Views",
     description: "The dancing aurora borealis illuminating the night sky is truly one of the most beautiful natural phenomena on Earth."
@@ -46,7 +46,7 @@ const experiences = [
     id: 5,
     title: "Street Food Tour",
     location: "Bangkok, Thailand",
-    image: "/images/bangkok.jpg",
+    image: "/images/street-food-bangkok.jpg",
     date: "May 5, 2023",
     category: "Food & Cuisine",
     description: "Exploring the bustling street food scene in Bangkok offers an authentic taste of Thai flavors and culture."
@@ -55,7 +55,7 @@ const experiences = [
     id: 6,
     title: "Snorkeling the Great Barrier Reef",
     location: "Queensland, Australia",
-    image: "/images/great-barrier-reef.jpg",
+    image: "/images/great-barrier-reef-queensland.jpg",
     date: "February 28, 2023",
     category: "Adventure",
     description: "Swimming alongside colorful coral and tropical fish in the world's largest reef system is a breathtaking underwater adventure."
@@ -64,7 +64,7 @@ const experiences = [
     id: 7,
     title: "Trekking to Machu Picchu",
     location: "Cusco, Peru",
-    image: "/images/machu-picchu.jpg",
+    image: "/images/machu-picchu-peru.jpg",
     date: "July 18, 2023",
     category: "Adventure",
     description: "Hiking the Inca Trail to discover the ancient citadel of Machu Picchu hidden among the clouds is the journey of a lifetime."
@@ -73,7 +73,7 @@ const experiences = [
     id: 8,
     title: "Sunset Desert Safari",
     location: "Dubai, UAE",
-    image: "/images/dubai.jpg",
+    image: "/images/dubai-desert-safari.jpg",
     date: "November 12, 2023",
     category: "Adventure",
     description: "Dune bashing, camel riding, and watching the sunset over the golden desert sands offers a magical Arabian experience."
@@ -82,7 +82,7 @@ const experiences = [
     id: 9,
     title: "Vineyard Tours in Tuscany",
     location: "Florence, Italy",
-    image: "/images/tuscany.jpg",
+    image: "/images/tuscany-vineyard-tour.jpg",
     date: "September 30, 2023",
     category: "Food & Cuisine",
     description: "Sampling exquisite wines while overlooking the rolling hills and cypress trees of the Tuscan countryside is pure bliss."
