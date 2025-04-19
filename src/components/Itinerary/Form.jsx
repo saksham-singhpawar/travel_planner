@@ -18,7 +18,9 @@ function Form({ onSubmit, onBudgetChange, onDestinationChange, setPreferences })
   // Update parent component when preferences change
   useEffect(() => {
     if (formData.preferences) {
-      setPreferences?.(formData.preferences);
+      // Parse preferences string into array
+      const preferencesArray = formData.preferences.split(',').map(p => p.trim()).filter(p => p !== '');
+      setPreferences?.(preferencesArray);
     }
   }, [formData.preferences, setPreferences]);
 
@@ -140,9 +142,16 @@ function Form({ onSubmit, onBudgetChange, onDestinationChange, setPreferences })
       return;
     }
     
-    // Call the onSubmit prop with the form data
+    // Format the data before submission
+    const formattedData = {
+      ...formData,
+      // Parse preferences string into array
+      preferences: formData.preferences.split(',').map(p => p.trim()).filter(p => p !== '')
+    };
+    
+    // Call the onSubmit prop with the formatted form data
     if (onSubmit) {
-      onSubmit(formData);
+      onSubmit(formattedData);
     }
   };
 

@@ -7,6 +7,7 @@ import Itinerary from "./components/Itinerary/Itinerary";
 import Contact from "./components/Contact/Contact"; 
 import Header from "./components/Home/Header"; 
 import Checklist from "./components/Checklist/Checklist";
+import Auth from "./components/Auth/Auth";
 import "./App.css";
 
 const AnimatedRoutes = () => {
@@ -20,6 +21,7 @@ const AnimatedRoutes = () => {
         <Route path="/itinerary" element={<Itinerary />} />
         <Route path="/contact" element={<Contact />} /> 
         <Route path="/checklist" element={<Checklist />} />
+        <Route path="/signin" element={<Auth />} />
       </Routes>
     </AnimatePresence>
   );

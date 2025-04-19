@@ -113,12 +113,21 @@
 }
 
 .input-group select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 20px;
-  padding-right: 45px;
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.input-group select option {
+  background-color: #000000;
+  color: white;
+  padding: 10px;
+  font-size: 16px;
 }
 
 .input-group input::placeholder {
@@ -286,7 +295,7 @@
   line-height: 1.4;
 }
 
-/* Custom checkbox */
+/* More robust checkbox styling */
 .checklist-category li label::before {
   content: '';
   position: absolute;
@@ -296,11 +305,18 @@
   height: 22px;
   border: 2px solid #6a11cb;
   border-radius: 5px;
-  background: white;
+  background-color: #ffffff !important;
   transition: all 0.2s ease;
+  z-index: 4;
 }
 
-.checklist-category li label::after {
+.checklist-category li input:checked ~ label::before {
+  background-color: #6a11cb !important;
+  border-color: #6a11cb !important;
+  z-index: 4;
+}
+
+.checklist-category li input:checked ~ label::after {
   content: '';
   position: absolute;
   left: 8px;
@@ -310,16 +326,10 @@
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
-  opacity: 0;
-  transition: all 0.2s ease;
-}
-
-.checklist-category li input:checked ~ label::before {
-  background: #6a11cb;
-}
-
-.checklist-category li input:checked ~ label::after {
   opacity: 1;
+  display: block !important;
+  z-index: 5;
+  visibility: visible !important;
 }
 
 .checklist-category li.checked .item-text {
@@ -392,6 +402,13 @@
   background-size: 20px;
   padding-right: 45px;
   transition: all 0.3s;
+  color: #333;
+}
+
+.category-select option {
+  color: #333;
+  background-color: white;
+  padding: 5px;
 }
 
 .category-select:focus {
@@ -515,32 +532,112 @@
 
 /* Print styles */
 @media print {
-  .checklist-page {
-    background: white;
-    color: black;
-    padding: 0;
-    margin: 0;
+  @page {
+    size: portrait;
+    margin: 1cm;
+  }
+
+  body * {
+    visibility: hidden;
   }
   
-  .checklist-hero, .trip-details, .add-item-form, .checklist-actions {
-    display: none;
+  .travel-checklist, 
+  .travel-checklist * {
+    visibility: visible !important;
+  }
+
+  .checklist-header h3 {
+    visibility: visible !important;
+    display: block !important;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: black !important;
   }
   
   .travel-checklist {
-    box-shadow: none;
-    padding: 0;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    padding: 20px !important;
+    background: white !important;
+    color: black !important;
+    overflow: visible !important;
+  }
+  
+  .checklist-hero, 
+  .trip-details, 
+  .add-item-form, 
+  .checklist-actions,
+  .progress-container {
+    display: none !important;
+    visibility: hidden !important;
   }
   
   .checklist-categories {
-    max-height: none;
-    display: block;
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    visibility: visible !important;
   }
   
   .checklist-category {
-    page-break-inside: avoid;
-    margin-bottom: 20px;
-    box-shadow: none;
-    border: 1px solid #ddd;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 20px !important;
+    border: 1px solid #000 !important;
+    padding: 15px !important;
+    visibility: visible !important;
+    display: block !important;
+    background-color: white !important;
+  }
+  
+  .checklist-category h4 {
+    visibility: visible !important;
+    color: black !important;
+    border-bottom: 2px solid black !important;
+  }
+  
+  .checklist-category ul {
+    visibility: visible !important;
+  }
+  
+  .checklist-category li {
+    visibility: visible !important;
+    display: block !important;
+    padding: 5px 0 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .checklist-category li label {
+    visibility: visible !important;
+    color: black !important;
+  }
+  
+  .item-text {
+    visibility: visible !important;
+    color: black !important;
+  }
+  
+  .checklist-category li label::before {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    border: 2px solid black !important;
+    background-color: white !important;
+  }
+  
+  .checklist-category li input:checked ~ label::before {
+    background-color: black !important;
+    border-color: black !important;
+  }
+  
+  .checklist-category li.checked .item-text {
+    text-decoration: line-through !important;
+    color: #333 !important;
   }
 }
 

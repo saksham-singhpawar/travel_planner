@@ -236,6 +236,75 @@ function Checklist() {
     setDestination(e.target.value);
   };
 
+  // Enhanced print function with direct rendering
+  const printChecklist = () => {
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert("Please allow pop-ups to print your checklist");
+      return;
+    }
+    
+    // Generate HTML content for the printable checklist
+    const printableHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Travel Packing Checklist${destination ? ' for ' + destination : ''}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 30px; }
+          h1 { text-align: center; margin-bottom: 15px; color: #333; }
+          .destination-info { text-align: center; margin-bottom: 25px; font-size: 16px; }
+          .category { margin-bottom: 30px; border: 1px solid #ccc; padding: 15px; break-inside: avoid; page-break-inside: avoid; }
+          .category h2 { color: #333; border-bottom: 2px solid #6a11cb; padding-bottom: 8px; margin-top: 0; }
+          ul { list-style: none; padding: 0; }
+          li { padding: 8px 0; display: flex; align-items: center; border-bottom: 1px dashed #eee; }
+          li:last-child { border-bottom: none; }
+          .checkbox { display: inline-block; width: 18px; height: 18px; border: 2px solid #6a11cb; border-radius: 3px; margin-right: 10px; position: relative; }
+          .checked .checkbox { background-color: #6a11cb; }
+          .checked .checkbox:after { content: '✓'; color: white; position: absolute; top: -3px; left: 3px; font-weight: bold; }
+          .checked .text { text-decoration: line-through; color: #777; }
+          @media print {
+            body { padding: 0; }
+            .category { break-inside: avoid; page-break-inside: avoid; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Travel Packing Checklist</h1>
+        ${destination ? `<div class="destination-info">Destination: ${destination} (${tripType.charAt(0).toUpperCase() + tripType.slice(1)} Trip)</div>` : ''}
+        
+        ${Object.keys(checklist).map(categoryKey => `
+          <div class="category">
+            <h2>${categoryKey}</h2>
+            <ul>
+              ${checklist[categoryKey].map(item => `
+                <li class="${item.checked ? 'checked' : ''}">
+                  <span class="checkbox"></span>
+                  <span class="text">${item.text}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `).join('')}
+        
+        <script>
+          window.onload = function() {
+            window.print();
+            // Optional: close window after printing
+            // setTimeout(function() { window.close(); }, 500);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+    
+    // Write to the new window and print
+    printWindow.document.open();
+    printWindow.document.write(printableHTML);
+    printWindow.document.close();
+  };
+
   return (
     <motion.div 
       className="checklist-page"
@@ -381,7 +450,7 @@ function Checklist() {
               Reset Checklist
             </button>
             
-            <button className="print-button" onClick={() => window.print()}>
+            <button className="print-button" onClick={printChecklist}>
               Print Checklist
             </button>
           </div>
